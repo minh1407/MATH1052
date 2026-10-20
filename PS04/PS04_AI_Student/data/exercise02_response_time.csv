@@ -1,0 +1,5 @@
+request_id,output_hundreds,response_time_s,mode
+R01,2,6,Accelerated
+R02,4,11,Accelerated
+R03,2,10,Standard
+R04,4,13,Standard

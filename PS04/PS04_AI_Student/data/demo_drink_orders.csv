@@ -1,0 +1,13 @@
+order_id,item_count,wait_time_min,service_mode
+O01,1,2.638178811,Standard
+O02,2,3.381073774,Standard
+O03,3,4.184370788,Standard
+O04,4,5.06499406,Standard
+O05,5,5.877617668,Standard
+O06,6,6.006793904,Standard
+O07,1,2.502917666,Express
+O08,2,3.311250917,Express
+O09,3,3.949805552,Express
+O10,4,4.331587149,Express
+O11,5,5.24854251,Express
+O12,6,5.679340581,Express

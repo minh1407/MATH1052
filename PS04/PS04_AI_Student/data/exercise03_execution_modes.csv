@@ -1,0 +1,13 @@
+request_id,input_hundreds,response_time_s,mode
+S01,2,5,Standard
+S02,4,7,Standard
+S03,6,6,Standard
+S04,8,7,Standard
+S05,10,10,Standard
+S06,12,10,Standard
+A01,2,3,Accelerated
+A02,4,2,Accelerated
+A03,6,4,Accelerated
+A04,8,5,Accelerated
+A05,10,5,Accelerated
+A06,12,8,Accelerated

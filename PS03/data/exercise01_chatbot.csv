@@ -1,0 +1,13 @@
+id,task,input_tokens,response_time_s,score
+1,FAQ,120,1.1,9
+2,FAQ,240,1.4,8
+3,FAQ,320,2.2,7
+4,FAQ,400,4.0,9
+5,Summarization,180,1.7,8
+6,Summarization,600,3.2,9
+7,Summarization,450,2.6,8
+8,Summarization,800,4.5,7
+9,Code,250,2.8,6
+10,Code,500,3.8,8
+11,Code,700,4.2,9
+12,Code,200,3.0,7
