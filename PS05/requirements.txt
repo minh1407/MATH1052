@@ -1,0 +1,5 @@
+# Đã kiểm tra thực thi trên Python 3.13.5.
+numpy>=1.26
+pandas>=2.2
+plotnine>=0.14
+ipykernel>=6

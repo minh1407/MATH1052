@@ -1,0 +1,581 @@
+% !TeX program = pdflatex
+% !TeX encoding = UTF-8
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1,T5]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[vietnamese]{babel}
+\usepackage{lmodern}
+\usepackage[protrusion=false]{microtype}
+\usepackage[a4paper,left=21mm,right=21mm,top=21mm,bottom=22mm,headheight=15pt,headsep=7mm,footskip=11mm]{geometry}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{booktabs,array,tabularx,longtable}
+\usepackage{enumitem,needspace,titlesec,fancyhdr,lastpage}
+\usepackage{xcolor,tcolorbox,tikz,listings,upquote}
+\usepackage[unicode,pdfencoding=auto,psdextra]{hyperref}
+\usepackage{bookmark}
+\definecolor{Ink}{HTML}{18364A}
+\definecolor{Teal}{HTML}{087E85}
+\definecolor{Light}{HTML}{F0F6F7}
+\definecolor{Line}{HTML}{CFDFE3}
+\definecolor{Warm}{HTML}{9B550B}
+\hypersetup{colorlinks=true,linkcolor=Teal,urlcolor=Teal,pdfauthor={Nguyễn Bích Vân},pdftitle={PS05 — Xác suất trong dự án AI},bookmarksopen=true}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small\sffamily Nguyễn Bích Vân \enspace | \enspace IAI-UET-VNU}
+\fancyhead[R]{\small\sffamily XSTK \enspace / \enspace PS05}
+\fancyfoot[L]{\scriptsize\sffamily Bối cảnh và số liệu giả định phục vụ học tập}
+\fancyfoot[R]{\small\thepage/\pageref*{LastPage}}
+\renewcommand{\headrulewidth}{0.35pt}
+\setlength{\parindent}{0pt}\setlength{\parskip}{5pt}
+\setlength{\emergencystretch}{3em}\raggedbottom
+\widowpenalty=10000\clubpenalty=10000
+\setlength{\abovedisplayskip}{7pt}\setlength{\belowdisplayskip}{7pt}
+\setlist[enumerate,1]{label=\alph*),leftmargin=1.7em,itemsep=4pt,topsep=4pt,parsep=1pt}
+\setlist[itemize]{leftmargin=1.5em,itemsep=2pt,topsep=3pt}
+\titleformat{\section}{\Large\sffamily\bfseries\color{Ink}}{}{0pt}{}
+\titleformat{\subsection}{\large\sffamily\bfseries\color{Ink}}{}{0pt}{}
+\titlespacing*{\section}{0pt}{0pt}{8pt}
+\titlespacing*{\subsection}{0pt}{13pt}{6pt}
+\lstset{language=Python,basicstyle=\ttfamily\fontsize{9}{11}\selectfont,
+keywordstyle=\bfseries\color{Ink},stringstyle=\color{Teal},commentstyle=\itshape\color{gray},
+backgroundcolor=\color{Light},frame=single,rulecolor=\color{Line},framerule=.3pt,
+framesep=5pt,xleftmargin=5pt,xrightmargin=5pt,columns=fullflexible,
+showstringspaces=false,keepspaces=true,breaklines=true,breakatwhitespace=false,
+breakindent=0pt,tabsize=4,upquote=true,aboveskip=6pt,belowskip=6pt}
+\newcommand{\advanced}{\texorpdfstring{\hfill{\normalsize\sffamily\color{Warm}[NÂNG CAO]}}{ [Nâng cao]}}
+\newcommand{\answerheading}{\par\medskip\noindent\textcolor{Teal}{\rule{\linewidth}{.4pt}}\par\nopagebreak{\sffamily\bfseries\color{Teal}Lời giải và diễn giải}\par\nopagebreak}
+\newcommand{\partheading}[2]{\section*{Phần #1 --- #2}\addcontentsline{toc}{section}{Phần #1 --- #2}}
+\newtcolorbox{infobox}{colback=Light,colframe=Line,boxrule=.45pt,arc=1mm,left=3mm,right=3mm,top=2mm,bottom=2mm}
+\begin{document}
+
+\thispagestyle{empty}
+{\small\sffamily\color{Teal}UET.MAT1052 \quad / \quad XÁC SUẤT THỐNG KÊ}
+\par\vspace{8mm}
+{\Huge\sffamily\bfseries\color{Ink}Bài tập Tuần 05}
+\par\vspace{3mm}
+{\LARGE\sffamily\color{Ink}Xác suất trong dự án AI}
+\par\vspace{6mm}
+\textbf{Tác giả đề: Nguyễn Bích Vân}\par
+IAI-UET-VNU
+\par\vspace{3mm}\textcolor{Teal}{\rule{\linewidth}{1pt}}\par
+{\large\sffamily\bfseries Bản sinh viên --- Chỉ có đề bài}
+\par\vspace{3mm}
+\begin{infobox}
+\textbf{28 bài, trong đó 3 bài nâng cao: Bài 3, Bài 21 và Bài 23.}
+Bối cảnh và số liệu được thiết kế cho học tập; không phải kết quả đánh giá hệ thống AI thực tế. Bài 1--26 ưu tiên tính tay và lập luận. Bài 27--28 dùng Python để mô phỏng và đối chiếu.
+\end{infobox}
+\subsection*{Lộ trình}
+\begin{tabularx}{\linewidth}{@{}p{11mm}Xr@{}}\toprule
+Phần & Trọng tâm & Bài\\\midrule
+A & Phép thử, không gian mẫu và biến cố & 1--4\\
+B & Các quy tắc tính xác suất & 5--9\\
+C & Xác suất có điều kiện & 10--15\\
+D & Độc lập & 16--20\\
+E & Xác suất toàn phần và định lý Bayes & 21--25\\
+F & Bài tập tổng hợp & 26\\
+G & Python: mô phỏng và đối chiếu & 27--28\\\bottomrule
+\end{tabularx}
+\subsection*{Cách trình bày bài làm}
+Trước khi tính, hãy xác định phép thử, biến cố và thông tin điều kiện. Mọi xác suất có điều kiện cần chỉ rõ nhóm kết quả ở mẫu số. Chỉ nhân các xác suất biên khi có căn cứ độc lập; khi lấy mẫu không hoàn lại, cập nhật thành phần còn lại.
+
+Giữ phân số hoặc số chính xác trong các bước trung gian. Có thể làm tròn kết quả cuối đến 4--6 chữ số thập phân. Các ký hiệu \(\overline A\) và \(A^c\) đều chỉ biến cố đối của \(A\); \(A\setminus B\) là ``\(A\) xảy ra, \(B\) không xảy ra''.
+
+\textbf{Mỗi con số phải đi cùng một câu giải thích.} Với phần Python, mã chạy được chưa đủ: cần nêu vì sao cơ chế mô phỏng đúng và kết quả đang ước lượng xác suất nào.
+
+\clearpage
+
+\noindent\begin{minipage}{\linewidth}
+
+\partheading{A}{Phép thử, không gian mẫu và biến cố}
+\subsection*{Bài 1 --- Gắn nhãn một yêu cầu cho trợ lý AI}
+\pdfbookmark[2]{Bài 1: Gắn nhãn một yêu cầu cho trợ lý AI}{ex1}
+
+Một trợ lý học tập ghi nhận mỗi yêu cầu bằng cặp \((v,c)\). Trong đó \(v=1\) nếu tài liệu đầu vào đã được kiểm tra nguồn, \(v=0\) nếu chưa; \(c\) là mức tài nguyên cần dùng, nhận một trong ba nhãn \texttt{Low}, \texttt{Medium}, \texttt{High} (thấp, vừa, cao). Giả sử cả sáu tổ hợp đều có thể xảy ra. Xét phép thử ghi mã một yêu cầu.
+
+\begin{enumerate}[label=\alph*)]
+\item Liệt kê không gian mẫu \(\Omega\).
+\item Gọi \(A\) là biến cố yêu cầu cần mức tài nguyên \texttt{High}. Liệt kê \(A\).
+\item Gọi \(B\) là biến cố tài liệu đầu vào chưa được kiểm tra nguồn. Liệt kê \(B\).
+\item Liệt kê \(\overline B\cup A\) và diễn đạt biến cố này bằng lời.
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 2 --- Hai agent chọn mức ngân sách}
+\pdfbookmark[2]{Bài 2: Hai agent chọn mức ngân sách}{ex2}
+
+Hai agent chọn độc lập mức ngân sách tính toán \(u,v\) trong \(\{0,1,2,3,4,5\}\); mỗi mức có cùng xác suất. Ghi kết quả theo thứ tự \((u,v)\). Đặt \(E=\{u+v\text{ là số lẻ}\}\), \(F=\{u=0\text{ hoặc }v=0\}\), \(G=\{u+v=3\}\).
+
+\begin{enumerate}[label=\alph*)]
+\item Mô tả \(E\cap F\) bằng lời và liệt kê các cặp thuộc biến cố đó.
+\item Mô tả \(E\cup F\) bằng một điều kiện trên \((u,v)\).
+\item Liệt kê \(F\cap G\).
+\item Mô tả \(E\cap\overline F\) và liệt kê các cặp tương ứng.
+\item Liệt kê \(E\cap F\cap G\).
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 3 --- Thử các bản mô hình: dừng sớm có làm đổi xác suất?\advanced}
+\pdfbookmark[2]{Bài 3: Thử các bản mô hình: dừng sớm có làm đổi xác suất?}{ex3}
+
+Nhóm dự án có sáu bản mô hình, đánh số 1--6. Ba bản 1, 2, 3 chưa tương thích với máy chạy thử; ba bản 4, 5, 6 tương thích. Nhóm xáo ngẫu nhiên sáu bản, mọi thứ tự đều có cùng khả năng, rồi thử lần lượt \textbf{không lặp lại} và dừng ngay khi gặp một bản tương thích. Kết quả được ghi bằng chuỗi số hiệu đã thử, chẳng hạn \(126\). Gọi \(T\) là số bản đã thử.
+
+\begin{enumerate}[label=\alph*)]
+\item Viết không gian mẫu dưới dạng các nhóm chuỗi có độ dài 1, 2, 3, 4. Có bao nhiêu chuỗi ở từng nhóm và tổng cộng bao nhiêu kết quả? Có thể dùng ký hiệu tập hợp thay vì viết cả danh sách dài.
+\item Gọi \(A=\{T=1\}\), \(B=\{\text{bản được chọn cuối cùng là 6}\}\). Mô tả \(A,B,A\cap B\).
+\item Tính xác suất của hai kết quả \(6\) và \(126\). Các chuỗi dừng có đồng khả năng không?
+\item Lập bảng \(P(T=t)\), với \(t=1,2,3,4\), bằng cách xét các bước thử liên tiếp; kiểm tra tổng xác suất.
+\item Biết hai lần đầu đều chưa tương thích, tính \(P(T=4\mid T\ge3)\) và xác suất bản cuối cùng là 6 trong cùng điều kiện đó.
+\item Nhóm muốn xác suất tìm được một bản tương thích trong ngân sách tối đa \(k\) lần thử đạt ít nhất \(95\%\). Tìm số nguyên \(k\) nhỏ nhất và giải thích vì sao \(k-1\) lần chưa đủ.
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 4 --- Khi nào trợ lý truy xuất tài liệu còn hoạt động?}
+\pdfbookmark[2]{Bài 4: Khi nào trợ lý truy xuất tài liệu còn hoạt động?}{ex4}
+
+Một trợ lý có ba thành phần: cổng nhận yêu cầu (1), kho truy xuất chính (2), kho truy xuất dự phòng (3). Trợ lý hoạt động khi cổng nhận yêu cầu hoạt động \textbf{và} ít nhất một trong hai kho truy xuất hoạt động. Gọi \(A_i\) là biến cố thành phần \(i\) hoạt động. Dùng chuỗi ba ký hiệu 1/0 theo thứ tự 1, 2, 3, với 1 là hoạt động, 0 là không hoạt động.
+
+\begin{enumerate}[label=\alph*)]
+\item Liệt kê biến cố \(E\): đúng hai thành phần hoạt động.
+\item Biểu diễn biến cố \(H\): trợ lý hoạt động, bằng \(A_1,A_2,A_3\); sau đó liệt kê các trạng thái thuộc \(H\).
+\item Liệt kê \(E\cap H\) và \(E\setminus H\). Vì sao đúng hai thành phần hoạt động chưa bảo đảm trợ lý hoạt động?
+\item Biểu diễn \(\overline H\) bằng hợp, giao và phần bù. Có cần giả định các thành phần độc lập để trả lời các câu trên không?
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+
+\partheading{B}{Các quy tắc tính xác suất}
+\subsection*{Bài 5 --- Hai nhánh xử lý không thể cùng được chọn}
+\pdfbookmark[2]{Bài 5: Hai nhánh xử lý không thể cùng được chọn}{ex5}
+
+Mỗi yêu cầu được một bộ định tuyến đưa vào đúng một nhánh. Gọi \(A\) là biến cố lấy câu trả lời từ bộ nhớ đệm, \(B\) là biến cố gửi sang bộ truy xuất tài liệu. Hai biến cố xung khắc; \(P(A)=0.28\), \(P(B)=0.47\). Các yêu cầu còn lại đi nhánh khác.
+
+\begin{enumerate}[label=\alph*)]
+\item Tính \(P(A\cup B)\).
+\item Tính \(P(A\cap\overline B)\).
+\item Tính \(P(A\cap B)\).
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 6 --- Có ít nhất một công cụ để làm dự án}
+\pdfbookmark[2]{Bài 6: Có ít nhất một công cụ để làm dự án}{ex6}
+
+Trong một khảo sát giả lập, \(42\%\) sinh viên có quyền dùng công cụ tìm kiếm theo ngữ nghĩa, \(58\%\) có quyền chạy mã trong môi trường cô lập và \(19\%\) có cả hai quyền. Một bài thực hành chỉ yêu cầu có ít nhất một trong hai công cụ.
+
+\begin{enumerate}[label=\alph*)]
+\item Chọn ngẫu nhiên một sinh viên trong khảo sát. Tính xác suất sinh viên đó đáp ứng yêu cầu về công cụ; biểu diễn biến cố trước khi tính.
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 7 --- Hai bộ phát hiện câu trả lời cần kiểm tra lại}
+\pdfbookmark[2]{Bài 7: Hai bộ phát hiện câu trả lời cần kiểm tra lại}{ex7}
+
+Một nhóm đánh giá 8\,000 câu trả lời của chatbot. Bộ phát hiện A gắn cờ 880 câu, bộ B gắn cờ 1\,040 câu; có 1\,560 câu được ít nhất một bộ gắn cờ. Chọn ngẫu nhiên một câu. Gọi \(A,B\) lần lượt là hai biến cố được từng bộ gắn cờ. ``Gắn cờ'' chỉ có nghĩa cần kiểm tra lại, chưa phải kết luận chắc chắn câu trả lời sai.
+
+\begin{enumerate}[label=\alph*)]
+\item Tính xác suất câu trả lời không được bộ nào gắn cờ.
+\item Tính xác suất cả hai bộ cùng gắn cờ và xác suất chỉ B gắn cờ.
+\item Nhóm muốn đọc lại mọi câu mà hai bộ không thống nhất. Viết biến cố tương ứng và tính số câu phải đọc lại.
+\item Có thể kết luận các câu được cả hai bộ gắn cờ chắc chắn sai không? Dữ kiện nào còn thiếu?
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 8 --- Ba trạm trải nghiệm trong ngày hội AI}
+\pdfbookmark[2]{Bài 8: Ba trạm trải nghiệm trong ngày hội AI}{ex8}
+
+Có 120 sinh viên tham dự ngày hội AI. Gọi \(L,V,S\) là các nhóm đã ghé trạm mô hình ngôn ngữ, thị giác máy tính và xử lý tiếng nói. Thống kê giả lập cho biết
+\[
+|L|=54,\quad |V|=48,\quad |S|=36;
+\qquad |L\cap V|=22,\quad |L\cap S|=14,\quad |V\cap S|=16,
+\]
+\[|L\cap V\cap S|=8.\]
+Các số giao đôi \textbf{có tính cả} những sinh viên ghé cả ba trạm.
+
+\begin{enumerate}[label=\alph*)]
+\item Chọn đều một sinh viên. Tính xác suất bạn đó chưa ghé trạm nào.
+\item Tính xác suất bạn đó đã ghé đúng một trạm.
+\item Chọn ngẫu nhiên hai sinh viên khác nhau, mọi cặp đồng khả năng. Tính xác suất có ít nhất một bạn đã ghé một trạm.
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 9 --- Agent nào được nhiều lượt gọi công cụ hơn?}
+\pdfbookmark[2]{Bài 9: Agent nào được nhiều lượt gọi công cụ hơn?}{ex9}
+
+Trong một thử nghiệm, ngân sách của agent A được chọn đều từ \(\{1,3,5\}\); ngân sách của agent B được chọn đều từ \(\{1,2,3,4,5,6\}\). Hai lựa chọn độc lập. Ngân sách được đo bằng số lượt gọi công cụ.
+
+\begin{enumerate}[label=\alph*)]
+\item Tính xác suất ngân sách của A lớn hơn của B.
+\item Tính xác suất hai ngân sách bằng nhau.
+\item Tính xác suất ngân sách của A nhỏ hơn của B. Kiểm tra ba kết quả cộng lại bằng 1.
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+
+\partheading{C}{Xác suất có điều kiện}
+\subsection*{Bài 10 --- Lấy prompt có hoàn lại và không hoàn lại}
+\pdfbookmark[2]{Bài 10: Lấy prompt có hoàn lại và không hoàn lại}{ex10}
+
+Một bộ thử có năm prompt khác nhau, mang mã \(\{0,1,2,3,4\}\). Mỗi lần chọn, các prompt đang có trong bộ đều có cùng khả năng được chọn. Thực hiện hai lần chọn. Gọi \(A\) là biến cố mã lần đầu là số chẵn, \(B\) là biến cố mã lần thứ hai ít nhất bằng 2.
+
+\begin{enumerate}[label=\alph*)]
+\item Không hoàn lại: tính \(P(B\mid\text{mã lần đầu là }0)\).
+\item Không hoàn lại: tính \(P(B\mid\text{mã lần đầu là }2)\).
+\item Có hoàn lại và hai lần chọn độc lập: tính \(P(B\mid A)\).
+\item Không hoàn lại: tính \(P(B\mid A)\). Giải thích vì sao phải xét cả ba khả năng 0, 2, 4 của lần đầu.
+\item Không hoàn lại: tính \(P(B)\), so sánh với câu d và với trường hợp có hoàn lại. Xác suất biên không đổi có đủ để suy ra hai lần chọn độc lập không?
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 11 --- Cùng một bảng, hai hướng điều kiện}
+\pdfbookmark[2]{Bài 11: Cùng một bảng, hai hướng điều kiện}{ex11}
+
+Một nhật ký giả lập phân loại yêu cầu theo chế độ trả lời \texttt{Fast} (nhanh), \texttt{Reasoning} (suy luận nhiều bước) và độ dài đầu ra. Mỗi yêu cầu thuộc đúng một ô; các phần trăm tính trên \textbf{toàn bộ} nhật ký.
+\begin{center}\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lrrr}\toprule
+Chế độ & \texttt{Short} (ngắn)&\texttt{Medium} (vừa)&\texttt{Long} (dài)\\\midrule
+\texttt{Fast}&18\%&22\%&25\%\\
+\texttt{Reasoning}&15\%&12\%&8\%\\\bottomrule
+\end{tabular}\end{center}
+Chọn ngẫu nhiên một yêu cầu. Gọi \(N\) là biến cố đầu ra ngắn, \(R\) là biến cố dùng chế độ suy luận nhiều bước.
+
+\begin{enumerate}[label=\alph*)]
+\item Tính \(P(N)\) và \(P(R)\).
+\item Tính \(P(R\mid N)\) và \(P(N\mid R)\).
+\item Viết một câu diễn giải cho mỗi xác suất ở câu b, chỉ rõ nhóm yêu cầu dùng làm mẫu số.
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 12 --- Kiểm tra ảnh theo đúng thứ tự}
+\pdfbookmark[2]{Bài 12: Kiểm tra ảnh theo đúng thứ tự}{ex12}
+
+Một bộ kiểm thử có 7 ảnh chứa tình huống hiếm và 5 ảnh thông thường. Chọn ngẫu nhiên lần lượt 4 ảnh không hoàn lại, mỗi ảnh còn lại đều có cùng khả năng được chọn.
+
+\begin{enumerate}[label=\alph*)]
+\item Tính xác suất hai ảnh đầu đều thuộc nhóm hiếm và hai ảnh cuối đều thuộc nhóm thông thường. Trình bày xác suất ở từng bước.
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 13 --- Ba agent và thứ tự ưu tiên}
+\pdfbookmark[2]{Bài 13: Ba agent và thứ tự ưu tiên}{ex13}
+
+Ba agent A, B, C chọn độc lập một mã ưu tiên trong \(\{1,2,3,4,5\}\), mỗi mã đồng khả năng. Gọi \(K\) là biến cố ba mã đôi một khác nhau, \(T\) là biến cố mã của A nhỏ hơn mã của B và mã của B nhỏ hơn mã của C.
+
+\begin{enumerate}[label=\alph*)]
+\item Tính \(P(K)\) bằng cách xét lần lượt ba agent.
+\item Khi biết \(K\), có bao nhiêu thứ tự lớn--nhỏ giữa ba agent? Tính \(P(T\mid K)\) và giải thích tính đối xứng.
+\item Tính \(P(T)\). Vì sao trả lời ngay \(1/6\) mà chưa xét khả năng trùng mã là chưa đúng?
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 14 --- Biết một prompt cụ thể hay biết có prompt đối kháng?}
+\pdfbookmark[2]{Bài 14: Biết một prompt cụ thể hay biết có prompt đối kháng?}{ex14}
+
+Một bộ kiểm thử gồm 20 prompt khác nhau, trong đó có 4 prompt đối kháng. Chọn ngẫu nhiên 2 prompt khác nhau; mọi cặp đều có cùng khả năng. Trong bốn prompt đối kháng có một prompt đặc biệt, ký hiệu \(p_*\). Gọi \(B\) là biến cố cả hai prompt đều đối kháng, \(A_*\) là biến cố cặp chọn có chứa \(p_*\), \(A\) là biến cố cặp chọn có ít nhất một prompt đối kháng.
+
+\begin{enumerate}[label=\alph*)]
+\item Tính \(P(B\mid A_*)\).
+\item Tính \(P(B\mid A)\). Nêu tập cặp nào được dùng làm mẫu số trong mỗi câu.
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 15 --- Hai mô hình trả lời cùng một tập câu hỏi}
+\pdfbookmark[2]{Bài 15: Hai mô hình trả lời cùng một tập câu hỏi}{ex15}
+
+Hai mô hình nhỏ (S) và lớn (L) cùng trả lời 400 câu hỏi. Điểm chất lượng dùng thang 0--10; không có câu trả lời nào được đúng 8 điểm. Bảng ghi số \textbf{câu hỏi}, mỗi câu đóng góp đúng một cặp kết quả:
+\begin{center}\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lrr}\toprule
+Kết quả mô hình S & L dưới 8 điểm & L trên 8 điểm\\\midrule
+S dưới 8 điểm&96&144\\
+S trên 8 điểm&40&120\\\bottomrule
+\end{tabular}\end{center}
+Chọn ngẫu nhiên một câu hỏi trong 400 câu.
+
+\begin{enumerate}[label=\alph*)]
+\item Tính xác suất mô hình L nhận dưới 8 điểm.
+\item Tính xác suất S nhận trên 8 điểm, biết L nhận trên 8 điểm.
+\item Tính xác suất S nhận trên 8 điểm, biết L nhận dưới 8 điểm.
+\item So sánh hai xác suất vừa tính và viết một nhận xét đúng phạm vi của bảng.
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+
+\partheading{D}{Độc lập}
+\subsection*{Bài 16 --- Hai biến cố cùng phụ thuộc một chuỗi có độc lập không?}
+\pdfbookmark[2]{Bài 16: Hai biến cố cùng phụ thuộc một chuỗi có độc lập không?}{ex16}
+
+Một bộ định tuyến chọn nhánh \texttt{Text} hoặc \texttt{Image} trong ba lượt liên tiếp. Các lựa chọn độc lập và mỗi nhánh có xác suất \(1/2\) ở mỗi lượt. Gọi \(A\) là biến cố nhánh \texttt{Image} được chọn nhiều nhất một lần; \(B\) là biến cố chuỗi ba lượt có cả hai loại nhánh.
+
+\begin{enumerate}[label=\alph*)]
+\item Kiểm tra \(A\) và \(B\) có độc lập không bằng cách tính \(P(A),P(B),P(A\cap B)\). Không suy luận chỉ từ việc chúng cùng dùng ba lượt chọn.
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 17 --- Hai công cụ của một trợ lý}
+\pdfbookmark[2]{Bài 17: Hai công cụ của một trợ lý}{ex17}
+
+Trong một lượt chạy, công cụ truy xuất tài liệu thành công với xác suất \(0.65\), công cụ thực thi mã thành công với xác suất \(0.80\). Gọi hai biến cố này là \(A\) và \(B\), và \textbf{giả sử chúng độc lập}.
+
+\begin{enumerate}[label=\alph*)]
+\item Biết truy xuất tài liệu thất bại, xác suất thực thi mã cũng thất bại là bao nhiêu?
+\item Tính xác suất có ít nhất một công cụ thành công.
+\item Biết có ít nhất một công cụ thành công, tính xác suất chỉ công cụ truy xuất thành công. Nêu biến cố ở tử số và mẫu số.
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 18 --- Bốn bản sao dịch vụ: ít nhất một hay cả bốn?}
+\pdfbookmark[2]{Bài 18: Bốn bản sao dịch vụ: ít nhất một hay cả bốn?}{ex18}
+
+Một dịch vụ AI có bốn bản sao. Khi nhận yêu cầu, mỗi bản sao phản hồi được với xác suất \(0.96\). Giả sử trạng thái phản hồi của bốn bản sao độc lập trong mô hình đang xét.
+
+\begin{enumerate}[label=\alph*)]
+\item Tính xác suất ít nhất một bản sao phản hồi được.
+\item Tính xác suất ít nhất một bản sao không phản hồi được.
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 19 --- Ba đoạn mã do mô hình sinh ra}
+\pdfbookmark[2]{Bài 19: Ba đoạn mã do mô hình sinh ra}{ex19}
+
+Một mô hình sinh ba đoạn mã. Trong mô hình xác suất giả định, mỗi đoạn vượt qua bộ kiểm thử với xác suất \(0.80\), độc lập với hai đoạn còn lại.
+
+\begin{enumerate}[label=\alph*)]
+\item Tính xác suất cả ba đoạn đều vượt qua.
+\item Tính xác suất ít nhất một đoạn không vượt qua.
+\item Tính xác suất đúng một đoạn vượt qua.
+\item Tính xác suất nhiều nhất một đoạn vượt qua.
+\item Biết ít nhất một đoạn vượt qua, tính xác suất cả ba đều vượt qua.
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 20 --- Chọn số còn thiếu để hai biến cố độc lập}
+\pdfbookmark[2]{Bài 20: Chọn số còn thiếu để hai biến cố độc lập}{ex20}
+
+Một nhóm dự án có 6 sinh viên năm thứ nhất sử dụng công cụ tự động kiểm tra mã và 9 bạn năm thứ nhất không sử dụng. Trong số sinh viên năm thứ hai, có 8 bạn sử dụng và \(x\) bạn không sử dụng. Chọn đều một sinh viên trong toàn bộ nhóm.
+
+\begin{enumerate}[label=\alph*)]
+\item Lập bảng hai chiều theo năm học và việc dùng công cụ.
+\item Tìm \(x\) để hai biến cố ``năm thứ nhất và ``sử dụng công cụ độc lập. Lập phương trình từ định nghĩa độc lập.
+\item Với \(x\) vừa tìm, kiểm tra bằng các tỉ lệ sử dụng trong từng năm. Hai biến cố có xung khắc không?
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+
+\partheading{E}{Xác suất toàn phần và định lý Bayes}
+\subsection*{Bài 21 --- Chuyển mẫu giữa hai kho: đúng loại chưa chắc đúng mẫu\advanced}
+\pdfbookmark[2]{Bài 21: Chuyển mẫu giữa hai kho: đúng loại chưa chắc đúng mẫu}{ex21}
+
+Kho I có 5 mẫu \texttt{Hard} (khó) và 7 mẫu \texttt{Regular} (thông thường); kho II có 6 mẫu khó và 2 mẫu thông thường. \textbf{Mỗi mẫu có một mã định danh riêng.} Chọn đều một mẫu trong kho I chuyển sang kho II, trộn đều, rồi chọn đều một mẫu trong kho II chuyển về kho I. Mẫu vừa chuyển sang vẫn có thể được chọn ở bước thứ hai.
+
+Gọi \(H_1,H_2\) là biến cố mẫu được chuyển ở bước thứ nhất, thứ hai thuộc loại khó; \(R\) là biến cố số mẫu mỗi loại trong kho I trở lại như ban đầu; \(S\) là biến cố mẫu chuyển về có \textbf{đúng mã định danh} của mẫu vừa chuyển đi.
+
+\begin{enumerate}[label=\alph*)]
+\item Vẽ cây theo hai loại mẫu được chuyển và ghi xác suất trên từng nhánh.
+\item Tính \(P(H_1\cap H_2)\).
+\item Tính \(P(R)\), chỉ rõ những nhánh nào làm khôi phục cơ cấu kho I.
+\item Biết \(R\) xảy ra, tính \(P(H_1\mid R)\).
+\item Tính \(P(S)\), chứng minh \(S\subset R\), rồi tính \(P(S\mid R)\). Vì sao không thể đồng nhất \(S\) với \(R\)?
+\item Biết cơ cấu kho I đã được khôi phục nhưng mẫu chuyển về \emph{khác mã} mẫu chuyển đi, tính \(P(H_1\mid R\cap\overline S)\).
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 22 --- Chatbot đúng hạn trong giờ cao điểm}
+\pdfbookmark[2]{Bài 22: Chatbot đúng hạn trong giờ cao điểm}{ex22}
+
+Một yêu cầu đến đúng giờ cao điểm với xác suất \(0.40\). Xác suất phản hồi trễ là \(0.35\) trong giờ cao điểm và \(0.08\) ngoài giờ cao điểm. Mỗi yêu cầu được phân loại là trễ hoặc không trễ theo cùng một ngưỡng thời gian.
+
+\begin{enumerate}[label=\alph*)]
+\item Tính xác suất một yêu cầu không bị phản hồi trễ.
+\item Biết một yêu cầu không trễ, tính xác suất nó đến trong giờ cao điểm.
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 23 --- Không nhận báo cáo: lỗi mô hình hay mất thông báo?\advanced}
+\pdfbookmark[2]{Bài 23: Không nhận báo cáo: lỗi mô hình hay mất thông báo?}{ex23}
+
+Trước khi theo dõi, xác suất một bản mô hình có lỗi là \(\alpha\), với \(0<\alpha<1\). Tình trạng lỗi của bản mô hình \textbf{giữ nguyên trong tất cả các vòng}. Nếu mô hình có lỗi, nó không bao giờ phát báo cáo \texttt{Ready}. Nếu không có lỗi, trong mỗi vòng nó phát báo cáo với xác suất \(q\); một báo cáo đã phát được truyền đến nơi với xác suất \(d\), độc lập với việc phát. Không có báo cáo giả.
+
+Giả sử các phép ngẫu nhiên của những vòng khác nhau độc lập \textbf{khi đã biết tình trạng lỗi}. Cho \(0<q,d<1\). Gọi \(L\) là biến cố mô hình có lỗi, \(N_i\) là biến cố không nhận báo cáo ở vòng \(i\), và \(N^{(m)}=N_1\cap\cdots\cap N_m\).
+
+\begin{enumerate}[label=\alph*)]
+\item Tính \(P(N_1\mid L)\), \(P(N_1\mid\overline L)\), \(P(N_1)\), rồi suy ra \(P(L\mid N_1)\).
+\item Chứng minh \(\alpha<P(L\mid N_1)<1\). Nếu nhận được ít nhất một báo cáo thì xác suất có lỗi bằng bao nhiêu theo mô hình này?
+\item Tìm công thức \(P(L\mid N^{(m)})\). Khi \(m\) tăng, xác suất này thay đổi thế nào? Vì sao không được xem tình trạng lỗi là được lấy lại ngẫu nhiên ở mỗi vòng?
+\item Với \(\alpha=0.12,\ q=0.75,\ d=0.80\), tính hậu nghiệm sau 1 vòng và 3 vòng không nhận báo cáo. Tìm số vòng liên tiếp ít nhất để hậu nghiệm đạt từ \(90\%\) trở lên.
+\item Hai biến cố \(N_1,N_2\) có độc lập khi \emph{chưa biết} tình trạng lỗi không? Tính \(P(N_1\cap N_2)-P(N_1)P(N_2)\) và giải thích bằng lời.
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 24 --- Một lần vượt kiểm thử cho biết gì về mô hình được chọn?}
+\pdfbookmark[2]{Bài 24: Một lần vượt kiểm thử cho biết gì về mô hình được chọn?}{ex24}
+
+Một chương trình chọn đều một trong ba mô hình giả lập A, B, C rồi kiểm tra đúng một lần. Xác suất vượt kiểm thử của A, B, C lần lượt là \(1\), \(0.40\), \(0.75\). Mức 1 là giả thiết của bài toán mô phỏng, không phải khẳng định về một sản phẩm AI thực tế. Quan sát thấy mô hình được chọn vượt kiểm thử.
+
+\begin{enumerate}[label=\alph*)]
+\item Tính xác suất chương trình đã chọn mô hình A.
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 25 --- Chọn tuyến xử lý để tránh vượt thời hạn}
+\pdfbookmark[2]{Bài 25: Chọn tuyến xử lý để tránh vượt thời hạn}{ex25}
+
+Một dịch vụ có hai tuyến xử lý. Tuyến I gồm 4 bước, tuyến II gồm 2 bước. Trong mỗi tuyến, ở từng bước có xác suất \(0.15\) phải chạy phương án dự phòng, độc lập giữa các bước. Theo quy tắc thời hạn của thử nghiệm, yêu cầu bị trễ nếu có ít nhất một nửa số bước trên tuyến phải chạy dự phòng: ít nhất 2 bước ở tuyến I, ít nhất 1 bước ở tuyến II.
+
+\begin{enumerate}[label=\alph*)]
+\item Nên chọn tuyến nào để xác suất trễ nhỏ hơn? Tính bằng các quy tắc xác suất đã học.
+\item Nếu bộ định tuyến chọn hai tuyến với xác suất bằng nhau, độc lập với các trạng thái bước xử lý, và quan sát thấy yêu cầu trễ, tính xác suất yêu cầu đã đi tuyến I.
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+
+\partheading{F}{Bài tập tổng hợp}
+\subsection*{Bài 26 --- Một bản mô hình qua ba cổng nghiệm thu}
+\pdfbookmark[2]{Bài 26: Một bản mô hình qua ba cổng nghiệm thu}{ex26}
+
+Một bản mô hình phải lần lượt vượt ba cổng: kiểm tra chức năng, kiểm tra an toàn, kiểm tra tốc độ. Nếu không vượt một cổng, quy trình dừng và không chạy các cổng sau. Xác suất vượt cổng thứ nhất là \(0.92\); biết đã vượt cổng thứ nhất, xác suất vượt cổng thứ hai là \(0.85\); biết đã vượt hai cổng đầu, xác suất vượt cổng thứ ba là \(0.90\).
+
+\begin{enumerate}[label=\alph*)]
+\item Tính xác suất bản mô hình vượt cả ba cổng.
+\item Biết bản mô hình không vượt cả ba cổng, tính xác suất nó bị dừng ở cổng thứ hai.
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+
+\partheading{G}{Python: mô phỏng và đối chiếu}
+\subsection*{Bài 27 --- Sửa một mô phỏng chọn sai không gian mẫu}
+\pdfbookmark[2]{Bài 27: Sửa một mô phỏng chọn sai không gian mẫu}{ex27}
+
+Hai agent chọn độc lập số lượt gọi công cụ trong \(\{1,2,3,4\}\), mỗi giá trị đồng khả năng. Ta muốn mô phỏng \emph{tổng} số lượt của hai agent. Một bạn viết:
+\begin{lstlisting}
+import numpy as np
+rng = np.random.default_rng(2026)
+total_values = np.arange(2, 9)
+rng.choice(total_values)
+\end{lstlisting}
+
+\begin{enumerate}[label=\alph*)]
+\item Đoạn mã có mô phỏng đúng phép thử không? Giải thích bằng cách so sánh số cặp tạo ra tổng 2 và tổng 5.
+\item Sửa mã để mô phỏng đúng nhiều lần. Nêu ý nghĩa của mỗi hàng trong mảng kết quả và chiều cộng cần dùng.
+\end{enumerate}
+
+\end{minipage}\par
+
+\par\medskip
+
+\noindent\begin{minipage}{\linewidth}
+\subsection*{Bài 28 --- Theo dõi tần suất định tuyến khi số lượt tăng}
+\pdfbookmark[2]{Bài 28: Theo dõi tần suất định tuyến khi số lượt tăng}{ex28}
+
+Một bộ định tuyến giả lập chọn đều một trong 50 điểm xử lý có mã từ 0 đến 49. Các lượt chọn độc lập. Gọi \(A\) là biến cố mã được chọn ít nhất bằng 35. Dùng Python mô phỏng 100, 1\,000 và 10\,000 lượt chọn; có thể lấy ba tiền tố của cùng một dãy 10\,000 lượt.
+
+\begin{enumerate}[label=\alph*)]
+\item Tính \(P(A)\) bằng cách đếm, trước khi chạy mã.
+\item Với từng cỡ mẫu, tạo dãy giá trị logic biểu thị biến cố \(A\) và tính tần suất bằng trung bình của dãy đó.
+\item Lập bảng gồm cỡ mẫu, số lần \(A\) xảy ra, tần suất và độ lệch tuyệt đối so với lý thuyết.
+\item Đổi seed và chạy lại. Sai lệch có bắt buộc giảm sau mỗi lần tăng cỡ mẫu không? Giải thích sự khác nhau giữa xác suất lý thuyết và tần suất mô phỏng.
+\end{enumerate}
+
+\end{minipage}\par
+
+\end{document}
