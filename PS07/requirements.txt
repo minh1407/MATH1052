@@ -1,0 +1,6 @@
+# Môi trường đã thử: Python 3.13.5. Không cần các gói này để biên dịch LaTeX.
+numpy==2.3.5
+pandas==2.2.3
+scipy==1.17.0
+plotnine==0.15.3
+ipykernel>=6.29
